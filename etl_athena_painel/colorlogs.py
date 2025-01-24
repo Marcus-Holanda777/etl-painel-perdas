@@ -71,10 +71,9 @@ class ColorLogg(Formatter):
 
         orig_format = re.sub(asc_compilar, rf"{color_asc}\1{reset}", orig_format)
         orig_format = re.sub(level_compilar, rf"{color_level}\1{reset}", orig_format)
-
         orig_msg = re.sub(msg_compile, rf"{color_msg}\1{reset}", orig_msg)
-        record.msg = orig_msg
 
+        record.msg = orig_msg
         new_format = logging.Formatter(orig_format, datefmt=self.datefmt)
 
         return new_format.format(record)

@@ -1,5 +1,5 @@
 import logging.config
-from etl_athena_painel.colorlogs import ColorLogg
+from etl_athena_painel.colorlogs import ColorLogg  # noqa: F401
 
 LOGGING_CONFIG = {
     "version": 1,
