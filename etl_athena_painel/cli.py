@@ -7,16 +7,15 @@ from functools import partial
 import argparse
 import os
 
-config = {
-    **dotenv_values()
-}
+config = {**dotenv_values()}
+
 
 def create_medallions():
-    lista = ['bronze', 'silver']
+    lista = ["bronze", "silver"]
     for path in lista:
         try:
             os.mkdir(path)
-            logger.info(f'Pasta criada = {path}')
+            logger.info(f"Pasta criada = {path}")
         except FileExistsError:
             logger.warning(f"Pasta [{path}] já existe !")
         except PermissionError:
@@ -26,42 +25,47 @@ def create_medallions():
 
 
 def pipe_transform(file: Path) -> Path:
-    tr = Transform()
-    tbl = tr.transform_file(file)
-    origem, destino, file_name = tr.export_file(file, tbl)
+    try:
+        tr = Transform()
+        tbl = tr.transform_file(file)
+        origem, destino, file_name = tr.export_file(file, tbl)
+        logger.info(f"{file.name} MB( input = {origem:.2f} output = {destino:.2f})")
+    except Exception as e:
+        logger.error(e)
+    else:
+        return file_name
 
-    logger.info(f"{file.name} MB( input = {origem:.2f} output = {destino:.2f})")
 
-    return file_name
-
-
-def pipe_load(file: Path, force = False) -> None:
-
-    ld = Load(**config)
-    ld.export_table(file, force)
-
-    logger.info(f"{file}")
+def pipe_load(file: Path, force=False) -> None:
+    try:
+        ld = Load(**config)
+        ld.export_table(file, force)
+        logger.info(f"{file}")
+    except Exception as e:
+        logger.error(e)
 
 
 def app_cli():
     parser = argparse.ArgumentParser(
-        prog='ETL Painel de perdas',
-        description='transforma e carrega dados referente ao painel de perdas',
-        epilog='Des. Marcus Holanda'
+        prog="ETL Painel de perdas",
+        description="transforma e carrega dados referente ao painel de perdas",
+        epilog="Des. Marcus Holanda",
     )
-    
-    parser.add_argument('-i', '--infra', action='store_true', help='Cria as camadas')
-    parser.add_argument('-f', '--force', action='store_true', help='Deleta as tabelas no Athena')
+
+    parser.add_argument("-i", "--infra", action="store_true", help="Cria as camadas")
+    parser.add_argument(
+        "-f", "--force", action="store_true", help="Deleta as tabelas no Athena"
+    )
 
     args = parser.parse_args()
-    logger.info(f'Args: {args.infra=}, {args.force=}')
+    logger.info(f"Args: {args.infra=}, {args.force=}")
 
     if args.infra:
         create_medallions()
 
     if args.force:
         logger.warning("Deletar tabelas ATHENA")
-    
-    bronze = Path('bronze')
+
+    bronze = Path("bronze")
     pipe_func = partial(pipe_load, force=args.force)
     __ = [*map(pipe_func, map(pipe_transform, bronze.iterdir()))]
