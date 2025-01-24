@@ -5,7 +5,7 @@ para o athena. A exportação sera para tabelas do tipo `ICEBERG`.
 
 ## Tecnologias - frameworks
 
-- **ibis-framework**: biblioteca Python para manipulação e análise de dados que abstrai SQL e integra com diversos backends.
+- **(ibis-framework)[https://ibis-project.org/]**: biblioteca Python para manipulação e análise de dados que abstrai SQL e integra com diversos backends.
 - **athena-mvsh**: biblioteca Python personalizada, desenvolvida para facilitar a interação com o Amazon Athena.
 - **python-dotenv**: biblioteca leve que carrega variáveis de ambiente de arquivos `.env` para o ambiente de execução Python.
 
@@ -25,7 +25,7 @@ O projeto separa os arquivos três camadas:
 4. Evitar palavras reservadas como (`select`, `vaccum`).
 5. Comprimento do nome.
 
->> A etapa de transformação realiza esses ajustes referente ao nome das colunas
+> A etapa de transformação realiza esses ajustes referente ao nome das colunas
 
 ```python
 from unicodedata import (
