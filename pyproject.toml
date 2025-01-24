@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "etl-athena-painel"
+version = "0.1.0"
+description = ""
+authors = ["Marcus Holanda <mvsh777@hotmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+ibis-framework = {extras = ["duckdb"], version = "^9.5.0"}
+athena-mvsh = "^0.0.14"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

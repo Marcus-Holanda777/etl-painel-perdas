@@ -1,0 +1,7 @@
+duckdb_home
+*.duckdb
+*.db
+*.env
+__pycache__
+silver/
+broze/
