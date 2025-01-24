@@ -11,7 +11,7 @@ para o athena. A exportação sera para tabelas do tipo `ICEBERG`.
 
 ## Camadas
 
-O projeto separa os arquivos três camadas:
+O projeto separa os arquivos em três camadas:
 
 - **bronze**: dados brutos, mantendo a origem dos dados exemplo: csv, excel.
 - **silver**: arquivos parquet compactados com `ZSTD` e um `ROW_GROUP_SIZE` de 100_000 para desempenho. Nome de colunas normalizadas e também registros de tipo `string`.
