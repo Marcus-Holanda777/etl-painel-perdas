@@ -6,6 +6,7 @@ from etl_athena_painel.logs import logger
 from functools import partial
 import argparse
 import os
+import sys
 
 config = {**dotenv_values()}
 
@@ -32,6 +33,7 @@ def pipe_transform(file: Path) -> Path:
         logger.info(f"{file.name} MB( input = {origem:.2f} output = {destino:.2f})")
     except Exception as e:
         logger.error(e)
+        sys.exit()
     else:
         return file_name
 
@@ -43,6 +45,7 @@ def pipe_load(file: Path, force=False) -> None:
         logger.info(f"{file}")
     except Exception as e:
         logger.error(e)
+        sys.exit()
 
 
 def app_cli():
@@ -57,15 +60,19 @@ def app_cli():
         "-f", "--force", action="store_true", help="Deleta as tabelas no Athena"
     )
 
-    args = parser.parse_args()
-    logger.info(f"Args: {args.infra=}, {args.force=}")
+    try:
+        args = parser.parse_args()
+    except Exception:
+        parser.print_help()
+    else:
+        logger.info(f"Args: {args.infra=}, {args.force=}")
 
-    if args.infra:
-        create_medallions()
+        if args.infra:
+            create_medallions()
 
-    if args.force:
-        logger.warning("Deletar tabelas ATHENA")
+        if args.force:
+            logger.warning("Deletar tabelas ATHENA")
 
-    bronze = Path("bronze")
-    pipe_func = partial(pipe_load, force=args.force)
-    __ = [*map(pipe_func, map(pipe_transform, bronze.iterdir()))]
+        bronze = Path("bronze")
+        pipe_func = partial(pipe_load, force=args.force)
+        __ = [*map(pipe_func, map(pipe_transform, bronze.iterdir()))]

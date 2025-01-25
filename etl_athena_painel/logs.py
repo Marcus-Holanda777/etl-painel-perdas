@@ -32,7 +32,7 @@ LOGGING_CONFIG = {
         },
     },
     "loggers": {
-        "": {  # Root logger
+        "": {
             "level": "INFO",
             "handlers": ["file", "console"],
         },

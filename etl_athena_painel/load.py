@@ -29,6 +29,13 @@ class Load:
 
         return False
 
+    def table_optimize(self, name: str, schema: str, client: Athena) -> None:
+        optimize = f"OPTIMIZE {schema}.{name} REWRITE DATA USING BIN_PACK"
+        vacuum = f"VACUUM {schema}.{name}"
+
+        client.execute(optimize)
+        client.execute(vacuum)
+
     def export_table(self, file: Path, force: bool = False) -> None:
         name, *__ = file.name.split(".")
         schema = self.config.get("schema_athena")
@@ -49,3 +56,6 @@ class Load:
                 location=f"{self.config.get('location_tables')}tables/{tbl_athena}/",
                 if_exists=if_exists,
             )
+
+            if if_exists != "replace":
+                self.table_optimize(tbl_athena, schema, client)

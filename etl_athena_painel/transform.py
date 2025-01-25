@@ -53,7 +53,7 @@ class Transform:
 
     def export_file(
         self, file: Path, tbl: ir.Table, camada: str = "silver"
-    ) -> tuple[float, float]:
+    ) -> tuple[float, float, Path]:
         MB = 1 << 20
 
         origem_size = file.stat().st_size / MB

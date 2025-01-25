@@ -36,9 +36,11 @@ import re
 
 def rename_cols(col: str) -> str:
     col = col.strip()
-    col = re.sub(r' +', ' ', col)
-    col = re.sub(r'\((R\$|%)\)', '', col, re.I)
-    col = normalize('NFC', ''.join(c for c in normalize('NFD', col) if not combining(c)))
-        
-    return '_'.join(col.strip().lower().split())
+    col = re.sub(r" +", " ", col)
+    col = re.sub(r"\((R\$|%)\)", "", col, re.I)
+    col = normalize(
+        "NFC", "".join(c for c in normalize("NFD", col) if not combining(c))
+    )
+
+    return "_".join(col.strip().lower().split())
 ```
