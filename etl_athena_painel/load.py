@@ -8,6 +8,11 @@ class Load:
         self.config = config
 
     def cursor(self) -> DBAthena:
+        """Configura o cursor com as credenciais do AWS
+
+        Returns:
+            DBAthena: objeto cursor
+        """
         return CursorParquetDuckdb(
             self.config.get("location"),
             result_reuse_enable=True,
@@ -17,6 +22,17 @@ class Load:
         )
 
     def table_exists(self, name: str, schema: str, client: Athena) -> bool:
+        """Verifica se tabela existe no Athena
+
+        Args:
+            name (str): nome da tabela
+            schema (str): schema da tabela
+            client (Athena): objeto para executar as consultas
+
+        Returns:
+            bool: Verdadeiro ou Falso
+        """
+
         stmt = f"""
         select 1 as col from information_schema.tables 
         where table_name = '{name}' 
@@ -30,6 +46,14 @@ class Load:
         return False
 
     def table_optimize(self, name: str, schema: str, client: Athena) -> None:
+        """Otimiza a tabela do tipo `ICEBERG`
+
+        Args:
+            name (str): nome da tabela
+            schema (str): schema da tabela
+            client (Athena): objeto para executar as consultas
+        """
+
         optimize = f"OPTIMIZE {schema}.{name} REWRITE DATA USING BIN_PACK"
         vacuum = f"VACUUM {schema}.{name}"
 
@@ -37,6 +61,13 @@ class Load:
         client.execute(vacuum)
 
     def export_table(self, file: Path, force: bool = False) -> None:
+        """_summary_
+
+        Args:
+            file (Path): _description_
+            force (bool, optional): _description_. Defaults to False.
+        """
+
         name, *__ = file.name.split(".")
         schema = self.config.get("schema_athena")
 

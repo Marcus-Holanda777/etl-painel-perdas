@@ -6,3 +6,6 @@ __pycache__
 silver/
 bronze/
 *.log*
+*.xlsx
+*.parquet
+*.gzip
