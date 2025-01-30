@@ -44,3 +44,16 @@ def rename_cols(col: str) -> str:
 
     return "_".join(col.strip().lower().split())
 ```
+
+## Arquitetura do Processo
+O pipeline de processamento de dados é dividido em duas etapas principais:
+
+### 1. Transformação e Normalização
+- Leitura de arquivos de entrada no formato **Excel (.xlsx)** e **Parquet (.parquet)**.
+- Aplicação de regras de normalização e otimização dos dados.
+- Escrita dos dados processados em **Parquet otimizado**.
+
+### 2. Exportação para Iceberg no Athena
+- Leitura dos arquivos Parquet otimizados gerados na etapa anterior.
+- Criação e atualização de tabelas no formato **Apache Iceberg** no **AWS Athena**.
+- Garantia de integridade e particionamento eficiente dos dados.
