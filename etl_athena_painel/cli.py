@@ -38,11 +38,17 @@ def pipe_transform(file: Path) -> Path:
         return file_name
 
 
-def pipe_load(file: Path, force=False) -> None:
+def pipe_load(file: Path, file_force: list[str] = None) -> None:
     try:
         ld = Load(**config)
+
+        force = False
+        if file_force:
+            if file.stem in set(map(str.lower, file_force)):
+                force = True
+
         ld.export_table(file, force)
-        logger.info(f"{file}")
+        logger.info(f"{file=} {force=}")
     except Exception as e:
         logger.error(e)
         sys.exit()
@@ -57,7 +63,12 @@ def app_cli():
 
     parser.add_argument("-i", "--infra", action="store_true", help="Cria as camadas")
     parser.add_argument(
-        "-f", "--force", action="store_true", help="Deleta as tabelas no Athena"
+        "-f",
+        "--force",
+        action="extend",
+        nargs="+",
+        type=str,
+        help="Lista de tabelas para (Delete, Create)",
     )
 
     try:
@@ -71,8 +82,8 @@ def app_cli():
             create_medallions()
 
         if args.force:
-            logger.warning("Deletar tabelas ATHENA")
+            logger.warning(f"Deletar tabelas ATHENA {args.force}")
 
         bronze = Path("bronze")
-        pipe_func = partial(pipe_load, force=args.force)
+        pipe_func = partial(pipe_load, file_force=args.force)
         __ = [*map(pipe_func, map(pipe_transform, bronze.iterdir()))]
